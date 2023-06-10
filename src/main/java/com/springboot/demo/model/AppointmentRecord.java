@@ -27,8 +27,6 @@ public class AppointmentRecord {
 	private long doctorId;
 	
 	public AppointmentRecord() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public AppointmentRecord( Long receptionistId,long patientId, String patientName,String appointmentDate, String appointmentStatus,

@@ -5,7 +5,10 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpSession;
 
+import com.springboot.demo.exception.PatientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,55 +46,66 @@ public class PatientController {
 	@Autowired
 	private ReceptionistRepository receptionistrepository; 
 	
-		//registration of patients
-		@CrossOrigin(origins = "http://localhost:4200")
-		@PostMapping("/PatientDetails")
-		public Patient createPatient(@RequestBody Patient patient) {
-			return patientRepository.save(patient);
-		}
-		
-		//patient login
-		@PostMapping("/login")
-		@ResponseBody
-		public Patient patientLogin(@RequestBody Patient p,HttpSession Session)
+	//registration of patients
+	@PostMapping("/register")
+	public Patient createPatient(@RequestBody Patient patient) {
+		return patientRepository.save(patient);
+	}
+
+	//patient login
+	@PostMapping("/login")
+	@ResponseBody
+	public ResponseEntity<String> patientLogin(@RequestBody Patient p, HttpSession Session)
+	{
+		Patient dt=patientRepository.findByEmailIdAndPassword(p.getEmailId(),p.getPassword());
+		if(Objects.nonNull(dt))
 		{
-			Patient dt=patientRepository.findByEmailIdAndPassword(p.getEmailId(),p.getPassword() );
-			if(Objects.nonNull(dt)) 
-			{
-				p.setAadharNo("success");
-				
-				return dt;
-			}
-			else 
-			{
-				p.setAadharNo("fail");
-				return p;
-			}
+			return ResponseEntity.ok(dt.toString());
 		}
-		
-			@PutMapping("/reqForAppointment/{id}")
-			public AppointmentRecord reqForAppointments(@PathVariable Long id,@RequestBody AppointmentRecord ar) {
-			
-				ar.setAppointmentStatus("Requested");
-			ar.setPatientId(id);
-			return appointmentrecordRepository.save(ar);
-			
+		else
+		{
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
 		}
-			
-			@GetMapping("/doctorDetails")
-			public List<Doctor> getAllDoctors(){
-				return doctorrepository.findAll();
+	}
+
+	@PutMapping("/reqForAppointment")
+	public ResponseEntity<String> reqForAppointments(@RequestBody AppointmentRecord ar) {
+		try {
+			ar.setAppointmentStatus("Requested");
+			Patient patient = patientRepository.findByPid2(ar.getPatientId());
+
+			if (patient == null) {
+				// Patient not found, handle the exception
+				throw new PatientNotFoundException("Patient not found with ID: " + ar.getPatientId());
 			}
 
-			@GetMapping("/receptionistDetails")
-			public List<Receptionist> getAllReceptionist(){
-				return receptionistrepository.findAll();
-			}
-		
-			@GetMapping("/getPatientById/{id}")
-			   public Patient getPatientById(@PathVariable long id){
-				   
-				   return patientRepository.findByPid2(id);
-			   }
+			ar.setPatientId(patient.getPid2());
+			appointmentrecordRepository.save(ar);
+
+			return ResponseEntity.ok("Success");
+		} catch (PatientNotFoundException e) {
+			// Handle the exception and return an appropriate response
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (Exception e) {
+			// Handle any other generic exceptions
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+		}
+	}
+
+
+	@GetMapping("/doctorDetails")
+	public List<Doctor> getAllDoctors(){
+		return doctorrepository.findAll();
+	}
+
+	@GetMapping("/receptionistDetails")
+	public List<Receptionist> getAllReceptionist(){
+		return receptionistrepository.findAll();
+	}
+
+	@GetMapping("/getPatientById/{id}")
+	public Patient getPatientById(@PathVariable long id){
+	   return patientRepository.findByPid2(id);
+	}
 
 }

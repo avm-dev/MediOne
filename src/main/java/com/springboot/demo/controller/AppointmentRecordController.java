@@ -47,24 +47,16 @@ public class AppointmentRecordController {
 	
 	@Autowired
 	  private JavaMailSender javaMailSender;
-
-	/*@GetMapping("/AppoinmentDetails/{id}")
-	public AppointmentRecord getAppointmentDetailsById(@PathVariable Long id){
-		
-		AppointmentRecord appointmentrecord = appointmentrecordrepository.findByReceptionistId(id);
-		
-		return appointmentrecord;
-	}*/
 	
-	// Getting Appointment Record from Appointment Record Table of Confirmed Requests
+	// Getting Appointment Record with status Confirmed
 	@GetMapping("/AppoinmentDetails/{id}")
 	   public List<AppointmentRecord> getAppointmentDetailsByIdAndStatus(@PathVariable Long id){
 		 
 		 List<AppointmentRecord> ApRecord = (List<AppointmentRecord>) appointmentrecordrepository.findByReceptionistIdAndAppointmentStatus(id,"Confirmed");
-		 	return ApRecord;
+		 return ApRecord;
 	}
 	
-	// Getting Appointment Record from Appointment Record Table of Requested Requests
+	// Getting Appointment Record with status Requested
 	@GetMapping("/RequestedAppoinmentDetails/{id}")
 	   public List<AppointmentRecord> getPendingAppointmentDetailsByIdAndStatus(@PathVariable Long id){
 		 
@@ -84,7 +76,8 @@ public class AppointmentRecordController {
 		}
 		 return patients;
 	}
-	
+
+	//get doctors list by receptionist
 	@GetMapping("/DoctorDetails/{id}")
 	   public List<Doctor> getDoctortDetailsById(@PathVariable Long id){
 		List<AppointmentRecord> ApRecord = (List<AppointmentRecord>) appointmentrecordrepository.findByReceptionistId(id);
@@ -95,34 +88,23 @@ public class AppointmentRecordController {
 		   return doctors;
 	    }
 	
-	//Get A single Row from Doctors table by using 
-	@GetMapping("/getDoctorDetails/{id}")	
-	public Doctor getDocotorSRow(@PathVariable Long id) {
-			Doctor dtr = doctorRepository.findByDoctorId(id);
-			return dtr;
-			
-		}
-	
 	
 	//Get A single Record from Appointment Record Table
-	@GetMapping("/getAppointmentRecords/{id}")
+	@GetMapping("/getAppointmentRecord/{id}")
 	public AppointmentRecord getRecordById(@PathVariable Long id) {
-		//Long id=Long.parseLong(id1);
-		AppointmentRecord APR = appointmentrecordrepository.findByRecordId(id);
-		return APR;
+		AppointmentRecord apr = appointmentrecordrepository.findByRecordId(id);
+		return apr;
 	}
 	
 	//Update Record of Appointment Record Table
 	@PutMapping("/updateAppointmentRecord/{id}")
 	public ResponseEntity<AppointmentRecord> updateAppointmentRecord(@PathVariable Long id,@RequestBody AppointmentRecord apr){
-		
 	    apr.setRecordId(id);
 	    AppointmentRecord updateappoitmentrecord = appointmentrecordrepository.save(apr);
         return ResponseEntity.ok(updateappoitmentrecord);
  }
-	
-	
-	   //Rest API for Deleting Record using Record Id
+
+    //Rest API for Deleting Record using Record Id
 	@DeleteMapping("/DeleteRecord/{id}")
 		public ResponseEntity <Map<String, Boolean>> deleteRecord(@PathVariable Long id){
 			AppointmentRecord record = appointmentrecordrepository.findByRecordId(id);
@@ -133,10 +115,10 @@ public class AppointmentRecordController {
 			return ResponseEntity.ok(response);
 		}
 
-
 	//  Sending E-mails to Patients
 	@PostMapping("/sendEmail/{id}")
-	public void sendEmail(@PathVariable Long id,@RequestBody AppointmentRecord apr) {
+	public void sendEmail(@PathVariable Long id) {
+		AppointmentRecord apr = appointmentrecordrepository.findByRecordId(id);
 		AppointmentRecord record = appointmentrecordrepository.findByRecordId(id);
 		Patient patient = patientRepository.findByPid2(record.getPatientId());
 		SimpleMailMessage msg = new SimpleMailMessage();
@@ -144,14 +126,14 @@ public class AppointmentRecordController {
 			String mail = patient.getEmailId();
 			msg.setTo(mail);
 			msg.setSubject("MediOne HEALTH CARE APPOINTMENT APPROVAL");
-			msg.setText("Hello, "+patient.getFirtName()+" "+patient.getLastName()+" Your Appointment is Approved for Date "+apr.getAppointmentDate()+"\n Your Regards - MediOne HEALTHCARE");
+			msg.setText("Hello, "+patient.getFirstName()+" "+patient.getLastName()+" Your Appointment is Approved for Date "+apr.getAppointmentDate()+"\n Your Regards - MediOne HEALTHCARE");
 			javaMailSender.send(msg);
 			System.out.println("Inside Confirmed loop");
 		}else if(record.getPatientId() == patient.getPid2() && record.getAppointmentStatus().equals("Rejected")) {
 			String mail = patient.getEmailId();
 			msg.setTo(mail);
 			msg.setSubject("MediOne HEALTH CARE APPOINTMENT Rejected");
-			msg.setText(patient.getFirtName()+" "+patient.getLastName()+" Your Appointment is Rejected Please request for other Date"+"\n Your Regards - MediOne HEALTHCARE");
+			msg.setText(patient.getFirstName()+" "+patient.getLastName()+" Your Appointment is Rejected Please request for other Date"+"\n Your Regards - MediOne HEALTHCARE");
 			javaMailSender.send(msg);
 			System.out.println("Inside Rejected loop");
 		}

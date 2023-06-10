@@ -68,7 +68,6 @@ public class PatientAuthenticationController {
 			msg.setSubject("MediOne HEALTH CARE OTP For Approval");
 			msg.setText("Hello, "+apr.getEmailId()+" Your OTP for Registration Approval is "+apr.getKey()+"\n Your Regards - MediOne HEALTHCARE");
 			javaMailSender.send(msg);
-			//System.out.println("Inside Confirmed loop");
 	}
 	
 

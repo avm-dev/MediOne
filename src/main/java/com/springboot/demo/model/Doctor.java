@@ -32,8 +32,6 @@ public class Doctor {
 	
 	@Column(name = "working_days")
 	private String workingDays;
-	
-	
 
 	public long getDoctorId() {
 		return doctorId;

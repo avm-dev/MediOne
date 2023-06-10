@@ -14,7 +14,7 @@ public class Patient {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long pid2;
 	@Column(name= "first_name")
-	private String firtName;
+	private String firstName;
 	
 	@Column(name="last_name")
 	private String lastName;
@@ -43,10 +43,10 @@ public class Patient {
 	public Patient() {
 		super();
 	}
-	public Patient(String firtName, String lastName, String gender, String emailId, String password, String age,
+	public Patient(String firstName, String lastName, String gender, String emailId, String password, String age,
 			String contactNo, String aadharNo, String address) {
 		super();
-		this.firtName = firtName;
+		this.firstName = firstName;
 		this.lastName = lastName;
 		this.gender = gender;
 		this.emailId = emailId;
@@ -62,11 +62,11 @@ public class Patient {
 	public void setPid2(long pid2) {
 		this.pid2 = pid2;
 	}
-	public String getFirtName() {
-		return firtName;
+	public String getFirstName() {
+		return firstName;
 	}
-	public void setFirtName(String firtName) {
-		this.firtName = firtName;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 	public String getLastName() {
 		return lastName;
@@ -116,6 +116,19 @@ public class Patient {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "pid2=" + pid2 +
+				", firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
+				", gender='" + gender + '\'' +
+				", emailId='" + emailId + '\'' +
+				", password='" + password + '\'' +
+				", age='" + age + '\'' +
+				", contactNo='" + contactNo + '\'' +
+				", aadharNo='" + aadharNo + '\'' +
+				", address='" + address + '\'' ;
+	}
+
 }
