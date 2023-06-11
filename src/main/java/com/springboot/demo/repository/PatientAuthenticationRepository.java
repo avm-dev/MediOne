@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.springboot.demo.model.PatientAuthentication;
 
+
 @Repository
 public interface PatientAuthenticationRepository extends JpaRepository<PatientAuthentication, Long> {
 	//authentication for registration purpose

@@ -9,6 +9,7 @@ import com.springboot.demo.model.AppointmentRecord;
 import com.springboot.demo.model.Patient;
 
 
+
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 	//login authentication

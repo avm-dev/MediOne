@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.springboot.demo.model.PPrescription;
 
 
+
 @Repository
 public interface PPrescriptionRepository extends JpaRepository<PPrescription, Long>{
 

@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.springboot.demo.model.Receptionist;
 
+
+
 public interface ReceptionistRepository extends JpaRepository<Receptionist, Long> {
 
 	List<Receptionist> findAll();

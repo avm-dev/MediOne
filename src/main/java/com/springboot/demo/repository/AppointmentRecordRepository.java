@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.springboot.demo.model.AppointmentRecord;
 
+
 @Repository
 public interface AppointmentRecordRepository extends JpaRepository<AppointmentRecord, Long>{
 

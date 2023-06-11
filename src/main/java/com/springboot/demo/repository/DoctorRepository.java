@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.springboot.demo.model.Doctor;
 
+
 public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 
 	List<Doctor> findAll();
